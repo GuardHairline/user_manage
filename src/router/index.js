@@ -6,8 +6,6 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 
-/* Router Modules */
-
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -52,11 +50,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
-  },
-  {
     path: '/404',
     component: () => import('@/views/error-page/404'),
     hidden: true
@@ -78,6 +71,20 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
+  },
+  {
+    path: '/profile',
+    component: Layout,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/profile/index'),
+        name: 'Profile',
+        meta: { title: '个人中心', icon: 'user', noCache: true }
+      }
+    ]
   }
 ]
 
@@ -86,51 +93,54 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  // 404 page must be placed at the end !!!
   {
     path: '/user',
     component: Layout,
-    redirect: 'user/user',
-    meta:
-      {
-        title: '用户管理',
-        icon: 'user',
-        roles: ['admin']
-      },
+    redirect: '/user/user',
+    alwaysShow: true, // will always show the root menu
+    name: 'userManage',
+    meta: {
+      title: '用户管理',
+      icon: 'user',
+      roles: ['MANAGE:USER'] // you can set roles in root nav
+    },
     children: [
       {
         path: 'user',
         component: () => import('@/views/user/user'),
         name: 'User',
-        meta: { title: '用户' }
+        meta: { title: '用户', roles: ['MANAGE:USER'] }
       },
       {
         path: 'role',
         component: () => import('@/views/user/role'),
         name: 'Role',
-        meta: { title: '角色' }
+        meta: { title: '角色', roles: ['MANAGE:USER'] }
       },
       {
         path: 'permission',
         component: () => import('@/views/user/permission'),
         name: 'Permission',
-        meta: { title: '权限' }
+        meta: { title: '权限', roles: ['MANAGE:USER'] }
       }
     ]
   },
+
   {
     path: '/statistics',
     component: Layout,
     redirect: '/statistics/index',
     children: [
       {
-        path: 'dashboard',
+        path: 'index',
         component: () => import('@/views/statistics/index'),
-        name: 'Dashboard',
-        meta: { title: '数据收集', icon: 'dashboard', affix: true }
+        name: 'statistics',
+        meta: { title: '数据统计', icon: 'chart', noCache: true }
       }
     ]
   },
+
+  // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 

@@ -110,6 +110,7 @@
 
 <script>
 import md5 from 'js-md5'
+import * as UserApi from '@/api/user'
 const copyObject = obj => JSON.parse(JSON.stringify(obj))
 
 export default {
@@ -166,6 +167,15 @@ export default {
      * 获取用户列表
      */
     getUserList() {
+      UserApi.getUsers(this.tableData).then(res => {
+        this.tableData.list = res.data.data.content
+        this.tableData.total = res.data.data.totalElements
+        this.$nextTick(() => {
+          this.tableData.list.forEach(row => {
+            this.getAvatar(row.id, row)
+          })
+        })
+      })
     },
 
     /**
